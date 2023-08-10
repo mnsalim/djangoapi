@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Event-State Model Builder</title>
+        
+
+        <style type="text/css">
+            .container { 
+            	 margin: auto;
+				 width: 50%;
+				 padding: 10px;
+				 background: lightcyan;
+
+            }
+            .instruciton{
+            	background: lightsalmon;
+            }
+            .disp_none {
+            	display: none;
+            }
+            .button {
+			  border: none;
+			  color: white;
+			  padding: 15px 28px;
+			  text-align: center;
+			  text-decoration: none;
+			  display: inline-block;
+			  font-size: 16px;
+			  margin: 4px 2px;
+			  cursor: pointer;
+			}
+
+			.button1 {background-color: #4CAF50;} /* Green */
+			.button2 {background-color: #008CBA;} /* Blue */
+        </style>
+    </head>
+
+    <body >
+		<main class="container">
+			<h2><center>Inputs for identifying the pre and post condition of a breach for generating the event-state model</center></h2>
+			
+			  <label for="id_controls"><b>Choose a breached security control: (This will comes from the auditing/monitoring results)</b></label>
+			  	<br>
+			  <select id="id_controls" name="controls" onchange="enableContnents(this)">
+			  	<option value="cntrl_0">Please select one control</option>
+				<option value="cntrl_1">AC-7: Unsuccessful Logon Attempts</option>
+				<option value="cntrl_2">CM-7: Least Functionality</option>
+				<option value="cntrl_3">SI-4(2, 7): System Monitoring | Automated Tools and Mechanisms for Real-time Analysis </option>
+			  </select><br><br>
+
+			  <div id="id_content" class="disp_none" >
+
+			  	<label for="id_control_desc"><b>Control Description: </b></label>
+			  	<br>
+			  	<p id="id_control_desc"> </p>
+			  	<br> 
+
+
+			  	<br><br>
+				<label><b>Selected Pre Conditions: </b></label>
+				<p id='id_pre_cond_list'></p>
+
+
+			  	<label for="id_pre_cond"><b>Choose possible pre-condition (reason or cause) of the breach:</b></label>
+			  	<br>
+			  	<select id="id_pre_cond" onchange="showPreCondIpnutOption(this)">
+					<option value="pre_cond_none">Select one pre-condition</option>
+					<option value="pre_cond_1">T1037_Boot or Logon Initialization Scripts</option>
+					<option value="pre_cond_2">T1037.003_Boot or Logon Initialization Scripts</option>
+					<option value="pre_cond_0">Others</option>
+				 </select><br>
+
+				<div class="disp_none" id="id_pre_cond_details">
+					<br><br>
+					  <label for="id_pre_cond_title" title="This is a two to five words title in the format of controlId_CauseOfBreach"><b>Pre-Condition Title:</b></label><br>
+					  <p id="id_pre_cond_title_hint">This is a two to five words title in the format of "controlId_CauseOfBreach"</p>
+					  <textarea cols="50" rows="2" id="id_pre_cond_title"  maxlength="50" title="You can check https://fight.mitre.org/ or https://attack.mitre.org/ website to identify the tactics and techniques related to the breach (you can use the search button in the website also)" placeholder="This is a two to five words title in the format of 'controlId_CauseOfBreach'." ></textarea><br><br>
+
+					  <label for="id_pre_cond_desc"><b>Pre-Condition Description:</b></label><br>
+					  <p id="id_pre_cond_desc_hint">Describe the logic for selecting this pre-condition of the breached security control within 250 words</p>
+					  <textarea   id="id_pre_cond_desc" name="fname" cols="80" rows="10"  maxlength="250" placeholder="Describe the logic for selecting this pre-condition of the breached security control within 250 words"> </textarea><br>
+				</div>
+
+				<button class="button button1" onclick="addMorePre()">Add more</button>
+				<button class="button button2" onclick="donePre()">Done</button>	
+
+
+				<div class="disp_none" id="id_post_cond_details_list">
+					<br><br>
+					<label><b>Selected Post Conditions: <b></label>
+					<p id='id_post_cond_list'></p>
+
+					<br><br>
+				  	<label for="id_post_cond"><b>Choose possible post-condition (impact or effect(s)) of the breach:</b></label>	
+				  	<br>
+					<select id="id_post_cond" onchange="showPostCondIpnutOption(this)">
+						<option value="post_cond_none">Select one post-condition</option>
+						<option value="post_cond_1">Access Server</option>
+						<option value="post_cond_2">Access DNS</option>
+						<option value="post_cond_0">Others</option>
+					 </select><br>
+
+					<div class="disp_none" id="id_post_cond_details">
+						<br><br>
+						  <label for="id_post_cond_title" title="This is a two to five words title in the format of controlId_EffectsOfBreach"><b>Post-Condition Title:</b></label><br>
+						  <p id="id_post_cond_title_hint" title="Hello world">This is a two to five words title in the format of "controlId_EffectsOfBreach"</p>
+						  <textarea cols="50" rows="2" id="id_post_cond_title"  maxlength="50" placeholder="This is a two to five words title in the format of controlId_EffectsOfBreach"></textarea><br><br>
+
+
+						  <label for="id_post_cond_desc" title="You can use the description of the specific techniques and sub techniques, especially the procedure examples for the mentioned pre-condition in earlier step."><b>Post-Condition Description:</b></label> <br>
+						  <p id="id_post_cond_desc_hint">Describe the logic for selecting this post-condition of the breached security control within 250 words</p>
+						  <textarea   id="id_post_cond_desc" name="lname" cols="50" rows="10"  maxlength="250" title="You can use the description of the specific techniques and sub techniques, especially the procedure examples for the mentioned pre-condition in earlier step." placeholder="You can use the description of the specific techniques and sub techniques, especially the procedure examples for the mentioned pre-condition in earlier step."> </textarea><br><br>
+					</div>
+
+					<button class="button button1" onclick="addMorePost()">Add more</button>
+					<button class="button button2" onclick="donePost()">Done</button>
+				</div>	
+				<br><br><br><br>
+
+				<button class="button button2" onclick="onSave()">Save the model</button>
+
+
+			  </div>
+
+					
+        </main>
+		
+		<script type="text/javascript">
+
+			const pre_list = []
+			const post_list = []
+
+			function addMorePre(){
+				var drop = document.getElementById('id_pre_cond');
+				drop.selectedIndex = 0;
+
+				document.getElementById('id_pre_cond_details').style.display = 'none'
+				
+
+			}
+
+			function donePre(){
+				 document.getElementById('id_post_cond_details_list').style.display = 'block'
+			}
+
+			function onSave(){
+				return confirm('Do you want to give input for another breached control?') 
+			}
+
+			function addMorePost(){
+				var drop = document.getElementById('id_post_cond');
+				drop.selectedIndex = 0;
+				document.getElementById('id_post_cond_details').style.display = 'none'
+				
+			}
+
+			function donePost(){
+				
+			}
+
+			function enableContnents(selectedItem){
+				selectedValue = selectedItem.value
+				console.log(selectedValue)
+
+				cntrl_1_desc = 'a. Enforce a limit of [Assignment: organization-defined number] consecutive invalid logon attempts by a user during a [Assignment: organization-defined time period]; and <br> b. Automatically [Selection (one or more): lock the account or node for an [Assignment: organization-defined time period]; lock the account or node until released by an administrator; delay next logon prompt per [Assignment: organization-defined delay algorithm]; notify system administrator; take other [Assignment: organization-defined action] when the maximum number of unsuccessful attempts is exceeded. '	
+
+				cntrl_2_desc = 	'a. Configure the system to provide only [Assignment: organization-defined mission essential capabilities]; and <br> b. Prohibit or restrict the use of the following functions, ports, protocols, software, and/or services: [Assignment: organization-defined prohibited or restricted functions, system ports, protocols, software, and/or services].'
+
+				cntrl_3_desc = 	'Automated tools and mechanisms include host-based, network-based, transport-based, or storage-based event monitoring tools and mechanisms or security information and event management (SIEM) technologies that provide real-time analysis of alerts and notifications generated by organizational systems. Automated monitoring techniques can create unintended privacy risks because automated controls may connect to external or otherwise unrelated systems. The matching of records between these systems may create linkages with unintended consequences. Organizations assess and document these risks in their privacy impact assessment and make determinations that are in alignment with their privacy program plan.'
+
+				element = document.getElementById('id_content');
+
+				if (selectedValue == "cntrl_1") {
+					console.log("inside cntrl_1 block")
+					element.style.display = 'block';
+
+					document.getElementById("id_control_desc").innerHTML = cntrl_1_desc;
+
+
+					pre_list = []
+					post_list = []
+
+
+					// element.classList.remove('disp_none');
+				}
+				else if (selectedValue == "cntrl_2") 
+				{
+					document.getElementById("id_control_desc").innerHTML = cntrl_2_desc;
+					element.style.display = 'block';
+
+
+					pre_list = []
+					post_list = []
+				}
+				else if (selectedValue == "cntrl_3") 
+				{
+					document.getElementById("id_control_desc").innerHTML = cntrl_3_desc;
+					element.style.display = 'block';
+
+
+					pre_list = []
+					post_list = []
+				}
+				else 
+				{
+					console.log("inside else block")
+					element.style.display = 'none';
+					document.getElementById("id_control_desc").innerHTML = '';	
+
+
+					pre_list = []
+					post_list = []
+					// element.classList.add('disp_none');
+				}
+			}
+
+
+			function showPreCondIpnutOption(selectedItem){
+
+				pre_cond_1_title = 'UnsuccessfullLogon_LogonScripts'
+				pre_cond_1_desc = 'Adversaries may use scripts automatically executed at boot or logon initialization to establish persistence. Initialization scripts can be used to perform administrative functions, which may often execute other programs or send information to an internal logging server.'
+				pre_cond_2_title = 'UnsuccessfullLogon_NetworkLogonScript'
+				pre_cond_2_desc = 'Adversaries may use network logon scripts automatically executed at logon initialization to establish persistence. Network logon scripts can be assigned using Active Directory or Group Policy Objects.(Citation: Petri Logon Script AD)'
+
+				selectedValue = selectedItem.value
+				console.log(selectedValue)
+				element = document.getElementById('id_pre_cond_details');
+
+				if (selectedValue == "pre_cond_1") {
+					console.log("inside pre_cond_0 block")
+					element.style.display = 'block';
+
+					document.getElementById('id_pre_cond_title').innerHTML = pre_cond_1_title;
+					document.getElementById('id_pre_cond_desc').innerHTML = pre_cond_1_desc;
+					
+					document.getElementById('id_pre_cond_title_hint').style.display = 'none';
+					document.getElementById('id_pre_cond_desc_hint').style.display = 'none';
+
+					pre_list.push(selectedItem.options[selectedItem.selectedIndex].text.concat('</br>'))
+					document.getElementById('id_pre_cond_list').innerHTML = pre_list.toString();
+						
+				}
+				else if (selectedValue == "pre_cond_2") {
+					console.log("inside pre_cond_0 block")
+					element.style.display = 'block';
+
+					document.getElementById('id_pre_cond_title').innerHTML = pre_cond_2_title;
+					document.getElementById('id_pre_cond_desc').innerHTML = pre_cond_2_desc;
+
+					document.getElementById('id_pre_cond_title_hint').style.display = 'none';
+					document.getElementById('id_pre_cond_desc_hint').style.display = 'none';
+
+					pre_list.push(selectedItem.options[selectedItem.selectedIndex].text.concat('<br>'))
+					document.getElementById('id_pre_cond_list').innerHTML = pre_list.toString();
+						
+				}
+				else if (selectedValue == "pre_cond_0") 
+				{
+					element.style.display = 'block';
+									
+					document.getElementById('id_pre_cond_title').innerHTML = '';
+					document.getElementById('id_pre_cond_desc').innerHTML = '';
+					
+					document.getElementById('id_pre_cond_title_hint').style.display = 'block';
+					document.getElementById('id_pre_cond_desc_hint').style.display = 'block';
+
+					pre_list.push(selectedItem.options[selectedItem.selectedIndex].text.concat('<br>'))
+					document.getElementById('id_pre_cond_list').innerHTML = pre_list.toString();
+				}
+				else
+				{
+					console.log("inside pre_cond else block")
+					element.style.display = 'none'
+
+					pre_list.pop()
+					document.getElementById('id_pre_cond_list').innerHTML = pre_list.toString();
+				}
+			}
+
+
+
+			function showPostCondIpnutOption(selectedItem){
+				
+				post_cond_1_title = 'UnsuccessfullLogon_AccessServer'
+				post_cond_1_desc = 'Adversaries may access the server.'
+				post_cond_2_title = 'UnsuccessfullLogon_AccessDNS'
+				post_cond_2_desc = 'Adversaries may access the DNS'
+	
+
+				selectedValue = selectedItem.value
+				console.log(selectedValue)
+
+				element = document.getElementById('id_post_cond_details');
+
+				if (selectedValue == "post_cond_1") {
+					console.log("inside post_cond_0 block")
+					element.style.display = 'block';
+
+					document.getElementById('id_post_cond_title').innerHTML = post_cond_1_title;
+					document.getElementById('id_post_cond_desc').innerHTML = post_cond_1_desc;
+					
+					document.getElementById('id_post_cond_title_hint').style.display = 'none';
+					document.getElementById('id_post_cond_desc_hint').style.display = 'none';
+
+					post_list.push(selectedItem.options[selectedItem.selectedIndex].text.concat('<br>'))
+					document.getElementById('id_post_cond_list').innerHTML = post_list.toString();
+						
+				}
+				else if (selectedValue == "post_cond_2") {
+					console.log("inside post_cond_0 block")
+					element.style.display = 'block';
+
+					document.getElementById('id_post_cond_title').innerHTML = post_cond_2_title;
+					document.getElementById('id_post_cond_desc').innerHTML = post_cond_2_desc;
+
+					document.getElementById('id_post_cond_title_hint').style.display = 'none';
+					document.getElementById('id_post_cond_desc_hint').style.display = 'none';
+
+					post_list.push(selectedItem.options[selectedItem.selectedIndex].text.concat('<br>'))
+					document.getElementById('id_post_cond_list').innerHTML = post_list.toString();
+						
+				}
+				else if (selectedValue == "post_cond_0") 
+				{
+					element.style.display = 'block';
+									
+					document.getElementById('id_post_cond_title').innerHTML = '';
+					document.getElementById('id_post_cond_desc').innerHTML = '';
+					
+					document.getElementById('id_post_cond_title_hint').style.display = 'block';
+					document.getElementById('id_post_cond_desc_hint').style.display = 'block';
+
+					post_list.push(selectedItem.options[selectedItem.selectedIndex].text.concat('<br>'))
+					document.getElementById('id_post_cond_list').innerHTML = post_list.toString();
+				}
+				else
+				{
+					console.log("inside pre_cond else block")
+					element.style.display = 'none'
+
+					post_list.pop();
+					document.getElementById('id_post_cond_list').innerHTML = post_list.toString();
+				}
+			}
+
+
+
+		</script>
+	</body>
+</html>
